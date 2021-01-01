@@ -50,16 +50,19 @@ namespace consoleapp
         }
     }
 
-    // class View {
-    //     // regist class
-    //     private colinfo
+    class View {
+        // regist class
+        private Dictionary<string,(int row, int column)> colinfo = new Dictionary<string,(int row, int column)>{
+            {"column1",(1,3)},
+            {"column2",(2,4)}
+        };
 
-    //     public void regist(row) {
-    //         foreach (var colname in colinfo.keys)
-    //         {
-    //             Console.WriteLine("set (row.Field(colname).GetString()) at ( (colinfo.colname.row) , (colinfo.colname.column) )");
-                
-    //         }
-    //     } 
-    // }
+        public void regist(IXLTableRow row) {
+
+            foreach (string colname in colinfo.Keys)
+            {
+                Console.WriteLine("set "+ row.Field(colname).GetString() + " at (" + colinfo[colname].row + " , " + colinfo[colname].column + " )");
+            }
+        }
+    }
 }

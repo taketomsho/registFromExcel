@@ -1,9 +1,4 @@
-add-type -path /home/kaneko/consoleapp/bin/Debug/net5.0/ClosedXML.dll
-add-type -path /home/kaneko/consoleapp/bin/Debug/net5.0/DocumentFormat.OpenXml.dll
-add-type -path /home/kaneko/consoleapp/bin/Debug/net5.0/ExcelNumberFormat.dll
-add-type -path /home/kaneko/consoleapp/bin/Debug/net5.0/Microsoft.Win32.SystemEvents.dll
-add-type -path /home/kaneko/consoleapp/bin/Debug/net5.0/System.Drawing.Common.dll
-add-type -path /home/kaneko/consoleapp/bin/Debug/net5.0/System.IO.Packaging.dll
+add-type -assemblyname ClosedXML.Excel
 
 function regist($row) {
     $colinfo = @{
@@ -41,3 +36,8 @@ foreach($row in $table.DataRange.Rows(1,$last - $first ) ){
 }
 $wb.Save()
 
+<#
+$wb = new-object ClosedXML.Excel.XLWorkbook("Showcase.xlsx")
+$r = $wb.Table("Table1").DataRange.Row(1)
+c:\Users\kanek\Desktop\console\Showcase.xlsx
+#>
