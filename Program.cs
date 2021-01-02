@@ -11,58 +11,129 @@ namespace consoleapp
         static void Main(string[] args)
         {
             // Open Workbook and make a sheet (sheet name is timestamp)
-            var wb = new XLWorkbook("Showcase.xlsx");
-            var ws = wb.Worksheets.Add( DateTime.Now.ToString("yyyyMMddHHmmss") );
+            var wb = new XLWorkbook();
+            var data = Prepare.MakeTable(wb);
 
-            // set data
-            ws.Cell(1, 1).Value = "columnA";
-            ws.Cell(2, 1).Value = "A1";
-            ws.Cell(3, 1).Value = "A2";
-            ws.Cell(4, 1).Value = "A3";
-
-            ws.Cell(1, 2).Value = "columnB";
-            ws.Cell(2, 2).Value = "B1";
-            ws.Cell(3, 2).Value = "B2";
-            ws.Cell(4, 2).Value = "B3";
-
-            // make table
-            var table = ws.RangeUsed().CreateTable();
-
-            wb.Save();
-
-            Int32 currentRow = table.RangeAddress.FirstAddress.RowNumber; // reset the currentRow
-            foreach (var row in table.DataRange.Rows())
+            foreach (var row in data.DataRange.Rows())
             {
-            // currentRow++;
-            var A = row.Field("columnA").GetString();
-            var B = row.Field("columnB").GetString();
-            var AandB = String.Format("{0} {1}", A, B);
-            Console.WriteLine(AandB);
-            }
-
-
-            // var posNums = table.DataRange.Rows().Where(row => row.Field("columnA").GetString() == "A1").Select(r => r);
-            var posNums = from row in table.DataRange.Rows()
-                            where row.Field("columnA").GetString() == "A1"
-                            select row;
-
-            foreach(var row2 in posNums ) Console.WriteLine( row2.Field("columnB").GetString() );
+            View View = new View(row);
+            View.regist();
+            }            
+            wb.SaveAs( DateTime.Now.ToString("yyyyMMddHHmmss") + ".xlsx" );
         }
     }
 
     class View {
-        // regist class
-        private Dictionary<string,(int row, int column)> colinfo = new Dictionary<string,(int row, int column)>{
-            {"column1",(1,3)},
-            {"column2",(2,4)}
+        private Dictionary<string,(int row, int column)> colinfo 
+            = new Dictionary<string,(int row, int column)>
+        {
+            {"columnC",(1,3)},
+            {"columnD",(2,4)},
+            {"columnE",(5,7)}
         };
 
-        public void regist(IXLTableRow row) {
+        private IXLTableRow row;
+
+        public View(IXLTableRow row)
+        {
+            this.row = row;
+        }
+
+        public void regist() {
 
             foreach (string colname in colinfo.Keys)
             {
                 Console.WriteLine("set "+ row.Field(colname).GetString() + " at (" + colinfo[colname].row + " , " + colinfo[colname].column + " )");
             }
+            try {
+                // 
+                Console.WriteLine("press ENTER");
+                Console.WriteLine("get message below");
+                Random r1 = new System.Random();
+                switch ( r1.Next(0,4) )
+                {
+                    case 0:
+                        break;
+                    case 1:
+                        throw new registException("error1");
+                    case 2:
+                        throw new registException("error2");
+                    default:
+                        throw new registException("error3");
+                }
+                Console.WriteLine("no error message");
+                Console.WriteLine("press Enter again");
+                row.Field("status").Value = "OK";
+
+            }catch(registException){
+                // 
+                Console.WriteLine("error");
+                Console.WriteLine("get screen shot");
+                row.Field("status").Value = "NG";
+            }finally{
+                Console.WriteLine("press F2 to go to main menu");
+            }
+        }
+    }
+    class registException : Exception {
+        // 
+        public registException() :base() {}
+        public registException(string str) :base(str) {}
+
+        public override string ToString()
+        {
+            return Message;
+        }
+
+
+    }
+
+    static class Prepare {
+        // 
+        public static IXLTable MakeTable(XLWorkbook wb)
+        {
+            // 
+            var ws = wb.Worksheets.Add("data");
+            // set data
+            ws.Cell("A1").Value = "SEQ";
+            ws.Cell("A2").Value = "1";
+            ws.Cell("A3").Value = "2";
+            ws.Cell("A4").Value = "3";
+            ws.Cell("A5").Value = "4";
+            ws.Cell("A6").Value = "5";
+
+            ws.Cell("B1").Value = "STATUS";
+
+            ws.Cell("C1").Value = "columnC";
+            ws.Cell("C2").Value = "C1";
+            ws.Cell("C3").Value = "C2";
+            ws.Cell("C4").Value = "C3";
+            ws.Cell("C5").Value = "C4";
+            ws.Cell("C6").Value = "C5";
+
+            ws.Cell("D1").Value = "columnD";
+            ws.Cell("D2").Value = "D1";
+            ws.Cell("D3").Value = "D2";
+            ws.Cell("D4").Value = "D3";
+            ws.Cell("D5").Value = "D4";
+            ws.Cell("D6").Value = "D5";
+
+            ws.Cell("E1").Value = "columnE";
+            ws.Cell("E2").Value = "E1";
+            ws.Cell("E3").Value = "E2";
+            ws.Cell("E4").Value = "E3";
+            ws.Cell("E5").Value = "E4";
+            ws.Cell("E6").Value = "E5";
+
+            return ws.RangeUsed().CreateTable();
+        }
+        public static void testLinq(IXLTable table){
+            Int32 currentRow = table.RangeAddress.FirstAddress.RowNumber; // reset the currentRow
+            var Linq1 = table.DataRange.Rows().Where(row => row.Field("columnA").GetString() == "A1").Select(r => r);
+            var Linq2 = from row in table.DataRange.Rows()
+                            where row.Field("columnC").GetString() == "C1"
+                            select row;
+            foreach(var row2 in Linq1 ) Console.WriteLine( row2.Field("columnC").GetString() );
         }
     }
 }
