@@ -8,53 +8,63 @@ add-type -path ./bin/Debug/net5.0/System.IO.Packaging.dll
 
 function regist($row) {
     $colinfo = @{
-        column1 = @{row = 1 ; column =3 }
-        column2 = @{row = 2 ; column =4 }
+        columnC = @{row = 1 ; column =3 }
+        columnD = @{row = 2 ; column =4 }
+        columnE = @{row = 5 ; column =7 }
     }
     foreach($colname in $colinfo.keys){
         "set `"$($row.Field($colname).GetString())`" at ( $($colinfo.$colname.row) , $($colinfo.$colname.column) )"
     }
-    "press ENTER"
-    "get message below"
-
-    if( (Get-Random) % 2 -eq 1 )
-    {
-        # 奇数の場合エラーなし
+    try{
+        "press ENTER"
+        "get message below"
+        # 奇数の場合エラー
+        $errornum = (Get-Random) % 4
+        if( $errornum -ne 1 ) { throw "error code is $errornum" }
         "no error message"
         "press Enter again"
-        "press F2 to go to main menu"
         $row.Field("status").Value = "OK"
-    }else{
-        # 偶数の場合エラー
-        "error"
+    }catch{
+        $PSItem.ToString()
         "get screen shot"
         $row.Field("status").Value = "NG"
+    }finally{
         "press F2 to go to main menu"
     }
 }
 
 $wb = new-object ClosedXML.Excel.XLWorkbook
 $ws = $wb.Worksheets.Add("data");
-$ws.Cell("A1").Value = "status";
-$ws.Cell("B1").Value = "column1";
-$ws.Cell("B2").Value = "1";
-$ws.Cell("B3").Value = "2";
-$ws.Cell("B4").Value = "3";
-$ws.Cell("C1").Value = "column2";
-$ws.Cell("C2").Value = "1";
-$ws.Cell("C3").Value = "2";
-$ws.Cell("C4").Value = "3";
-
+$ws.Cell("A1").Value = "SEQ";
+$ws.Cell("A2").Value = "1";
+$ws.Cell("A3").Value = "2";
+$ws.Cell("A4").Value = "3";
+$ws.Cell("A5").Value = "4";
+$ws.Cell("A6").Value = "5";
+$ws.Cell("B1").Value = "status";
+$ws.Cell("C1").Value = "columnC";
+$ws.Cell("C2").Value = "C1";
+$ws.Cell("C3").Value = "C2";
+$ws.Cell("C4").Value = "C3";
+$ws.Cell("C5").Value = "C4";
+$ws.Cell("C6").Value = "C5";
+$ws.Cell("D1").Value = "columnD";
+$ws.Cell("D2").Value = "D1";
+$ws.Cell("D3").Value = "D2";
+$ws.Cell("D4").Value = "D3";
+$ws.Cell("D5").Value = "D4";
+$ws.Cell("D6").Value = "D5";
+$ws.Cell("E1").Value = "columnE";
+$ws.Cell("E2").Value = "E1";
+$ws.Cell("E3").Value = "E2";
+$ws.Cell("E4").Value = "E3";
+$ws.Cell("E5").Value = "E4";
+$ws.Cell("E6").Value = "E5";
 $table = $ws.RangeUsed().CreateTable()
+
 $first = $table.RangeAddress.FirstAddress.RowNumber
 $last  = $table.RangeAddress.LastAddress.RowNumber
 foreach($row in $table.DataRange.Rows(1,$last - $first ) ){
     regist($row)
 }
 $wb.SaveAs( $(Get-Date -Format "yyyyMMddHHmmss") + ".xlsx")
-
-<#
-$wb = new-object ClosedXML.Excel.XLWorkbook("Showcase.xlsx")
-$r = $wb.Table("Table1").DataRange.Row(1)
-c:\Users\kanek\Desktop\console\Showcase.xlsx
-#>

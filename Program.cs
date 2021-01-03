@@ -10,16 +10,18 @@ namespace consoleapp
     {
         static void Main(string[] args)
         {
-            // Open Workbook and make a sheet (sheet name is timestamp)
-            var wb = new XLWorkbook();
+        using(var wb = new XLWorkbook())
+        {
             var data = Prepare.MakeTable(wb);
+            View View = new View();
 
             foreach (var row in data.DataRange.Rows())
             {
-            View View = new View(row);
-            View.regist();
+                View.row = row;
+                View.regist();
             }            
             wb.SaveAs( DateTime.Now.ToString("yyyyMMddHHmmss") + ".xlsx" );
+        }
         }
     }
 
@@ -32,13 +34,8 @@ namespace consoleapp
             {"columnE",(5,7)}
         };
 
-        private IXLTableRow row;
-
-        public View(IXLTableRow row)
-        {
-            this.row = row;
-        }
-
+        public IXLTableRow row;
+        
         public void regist() {
 
             foreach (string colname in colinfo.Keys)
@@ -102,7 +99,7 @@ namespace consoleapp
             ws.Cell("A5").Value = "4";
             ws.Cell("A6").Value = "5";
 
-            ws.Cell("B1").Value = "STATUS";
+            ws.Cell("B1").Value = "status";
 
             ws.Cell("C1").Value = "columnC";
             ws.Cell("C2").Value = "C1";
