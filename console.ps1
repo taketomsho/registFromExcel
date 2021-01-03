@@ -13,7 +13,12 @@ function regist($row) {
         columnE = @{row = 5 ; column =7 }
     }
     foreach($colname in $colinfo.keys){
-        "set `"$($row.Field($colname).GetString())`" at ( $($colinfo.$colname.row) , $($colinfo.$colname.column) )"
+        $values = @(
+            $row.Field($colname).GetString(),
+            $colinfo.$colname.row,
+            $colinfo.$colname.column
+        )
+        "set `"{0}`" at ( {1} , {2} )" -f $values
     }
     try{
         "press ENTER"
@@ -41,7 +46,7 @@ $ws.Cell("A3").Value = "2";
 $ws.Cell("A4").Value = "3";
 $ws.Cell("A5").Value = "4";
 $ws.Cell("A6").Value = "5";
-$ws.Cell("B1").Value = "status";
+$ws.Cell("B1").Value = "status";    
 $ws.Cell("C1").Value = "columnC";
 $ws.Cell("C2").Value = "C1";
 $ws.Cell("C3").Value = "C2";

@@ -35,12 +35,17 @@ namespace consoleapp
         };
 
         public IXLTableRow row;
-        
+
         public void regist() {
 
             foreach (string colname in colinfo.Keys)
             {
-                Console.WriteLine("set "+ row.Field(colname).GetString() + " at (" + colinfo[colname].row + " , " + colinfo[colname].column + " )");
+                string[] values = {
+                    row.Field(colname).GetString(),
+                    colinfo[colname].row.ToString(),
+                    colinfo[colname].column.ToString()
+                };
+                Console.WriteLine( String.Format("set {0} at ({1},{2})",values) );
             }
             try {
                 // 
